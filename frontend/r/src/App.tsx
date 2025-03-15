@@ -7,7 +7,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Game />} />
+        <Route path="/GameStar/" element={<Game />} />
       </Routes>
     </Router>
   );
