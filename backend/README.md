@@ -73,10 +73,14 @@ pip install -r ./backend/requirements.txt
 使用 `uvicorn` 启动 FastAPI 后端服务，建议在测试模式下运行，绑定到所有网络接口：
 
 ```bash
-uvicorn main:app --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8080
 ```
 
 然后在浏览器或使用 `curl` 访问 `http://<你的服务器IP>:8000/generate`，检查接口是否正常响应。
+```bash
+curl http://0.0.0.0:8000/generate
+curl http://20.189.123.18:8000/generate
+```
 
 ## 6. 配置 systemd 服务（可选，便于后台运行）
 
@@ -90,13 +94,13 @@ sudo nano /etc/systemd/system/myapp.service
 
 ```ini
 [Unit]
-Description=FastAPI 后端服务
+Description=GameStar后端服务
 After=network.target
 
 [Service]
-User=<your-username>
-WorkingDirectory=/home/<your-username>/<your-repo-directory>
-ExecStart=/home/<your-username>/<your-repo-directory>/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+User=rocky
+WorkingDirectory=/home/rocky/project/GameStar/backend
+ExecStart=/home/rocky/project/GameStar/venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8000
 Restart=always
 
 [Install]
@@ -130,7 +134,7 @@ sudo apt install -y nginx
 ```nginx
 server {
     listen 80;
-    server_name your.domain.com; # 或者直接用服务器 IP
+    server_name 20.189.123.18;
 
     location / {
         proxy_pass http://127.0.0.1:8000;
