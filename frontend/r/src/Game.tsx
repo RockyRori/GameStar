@@ -25,8 +25,7 @@ const Game: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<number>(120);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [errorMarkers, setErrorMarkers] = useState<ErrorMarker[]>([]);
-
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     fetchNewGame();
@@ -63,9 +62,15 @@ const Game: React.FC = () => {
 
   // 获取新局数据，同时重置所有状态
   const fetchNewGame = async () => {
-    const response = await axios.get("http://localhost:8000/generate");
-    setImage1(`http://localhost:8000/static/${response.data.image1}`);
-    setImage2(`http://localhost:8000/static/${response.data.image2}`);
+    // Windows 更新图片
+//     const response = await axios.get("http://localhost:8000/generate");
+//     setImage1(`http://localhost:8000/static/${response.data.image1}`);
+//     setImage2(`http://localhost:8000/static/${response.data.image2}`);
+    // Linux 获取旧图片
+    const response = await axios.get("http://20.189.123.18:8000/generate");
+    setImage1(`http://20.189.123.18:8000/static/${response.data.image1}`);
+    setImage2(`http://20.189.123.18:8000/static/${response.data.image2}`);
+
     setDifferences(response.data.differences);
     setFoundPoints([]);
     setHintPoints([]);
