@@ -12,9 +12,14 @@ def load_model():
     global pipe
     if pipe is None:
         model_path = "runwayml/stable-diffusion-v1-5"
-        pipe = StableDiffusionPipeline.from_pretrained(model_path, torch_dtype=torch.float16).to("cuda")
-        pipe.enable_attention_slicing()
-        print("✅ Stable Diffusion 模型加载完成")
+        # 自动检测是否有 GPU
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        # CPU 上通常不支持 float16，使用 float32
+        dtype = torch.float16 if device == "cuda" else torch.float32
+        pipe = StableDiffusionPipeline.from_pretrained(model_path, torch_dtype=dtype).to(device)
+        if device == "cuda":
+            pipe.enable_attention_slicing()
+        print(f"✅ Stable Diffusion 模型加载完成，使用设备：{device}")
 
 
 load_model()

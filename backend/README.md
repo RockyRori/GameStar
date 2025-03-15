@@ -21,3 +21,160 @@ spot-the-difference-game/
 │── README.md # 项目说明
 │── .gitignore # Git忽略文件
 ```
+
+## 1. 更新系统并安装必备软件
+
+打开终端，运行以下命令来更新系统并安装 Git、Python3、pip、venv 以及其他必要软件：
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git python3 python3-pip python3-venv
+```
+
+## 2. 克隆你的代码仓库
+
+将你的代码仓库克隆到服务器上（请将 `<your-repo-url>` 替换为你的仓库地址）：
+
+```bash
+git clone https://github.com/RockyRori/GameStar.git
+cd GameStar
+```
+
+## 3. 创建 Python 虚拟环境并安装依赖
+
+创建并激活虚拟环境，以便管理依赖：
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+然后安装依赖：
+
+```bash
+pip install --upgrade pip
+pip install -r ./backend/requirements.txt
+```
+
+**注意：**
+
+- 如果云服务器带有 GPU，请确保已安装 NVIDIA 驱动和 CUDA 库，并安装支持 GPU 的 `torch` 版本。
+- 如果仅使用 CPU，可以将代码中的 `.to("cuda")` 改为 `.to("cpu")`。
+
+## 4. 模型下载与配置
+
+第一次运行时，Stable Diffusion 模型会自动下载到缓存目录，请注意：
+
+- 模型文件较大（通常需要几 GB），下载可能需要一些时间。
+- 如果需要 Hugging Face 访问令牌，请配置环境变量 `HUGGINGFACE_HUB_TOKEN`。
+
+## 5. 测试启动后端服务
+
+使用 `uvicorn` 启动 FastAPI 后端服务，建议在测试模式下运行，绑定到所有网络接口：
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+然后在浏览器或使用 `curl` 访问 `http://<你的服务器IP>:8000/generate`，检查接口是否正常响应。
+
+## 6. 配置 systemd 服务（可选，便于后台运行）
+
+在 `/etc/systemd/system/` 目录下创建 `myapp.service` 文件：
+
+```bash
+sudo nano /etc/systemd/system/myapp.service
+```
+
+文件内容如下（请替换路径和用户名）：
+
+```ini
+[Unit]
+Description=FastAPI 后端服务
+After=network.target
+
+[Service]
+User=<your-username>
+WorkingDirectory=/home/<your-username>/<your-repo-directory>
+ExecStart=/home/<your-username>/<your-repo-directory>/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+保存后，加载并启动服务：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable myapp.service
+sudo systemctl start myapp.service
+```
+
+检查服务状态：
+
+```bash
+sudo systemctl status myapp.service
+```
+
+## 7. 配置 Nginx 反向代理（可选）
+
+如果希望使用标准端口（如 `80/443`）访问后端，可以安装 Nginx 并配置反向代理：
+
+```bash
+sudo apt install -y nginx
+```
+
+创建或编辑 Nginx 配置文件（例如 `/etc/nginx/sites-available/myapp`）：
+
+```nginx
+server {
+    listen 80;
+    server_name your.domain.com; # 或者直接用服务器 IP
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+启用该配置并重启 Nginx：
+
+```bash
+sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+## 8. 防火墙配置
+
+确保服务器防火墙允许 HTTP（80）、HTTPS（443）以及后端服务端口（如 `8000`）：
+
+```bash
+sudo ufw allow 80
+sudo ufw allow 443
+sudo ufw allow 8000
+sudo ufw enable
+```
+
+## 9. 总结与后续
+
+- **前端部分** 可以部署在 GitHub Pages 上，然后通过 API 调用已部署的后端服务（使用服务器的域名或 IP）。
+- **调试或修改环境** 时，记得先激活虚拟环境：
+
+  ```bash
+  source /home/<your-username>/<your-repo-directory>/venv/bin/activate
+  ```
+
+- **日志排查**：
+    - Uvicorn 日志可直接查看终端输出。
+    - 使用 `systemctl` 管理的服务日志可通过以下命令查看：
+
+      ```bash
+      journalctl -u myapp.service -f
+      ```
+
+按照以上步骤，你可以在云服务器上完成后端服务的部署，并确保前后端顺利联动。
+
