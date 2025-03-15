@@ -1,4 +1,129 @@
-/* 绿色标记圈 */
+/* 基础样式 */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+.game-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.game-title {
+  text-align: center;
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* 布局调整：左右两栏 */
+.game-layout {
+  display: flex;
+  gap: 20px;
+}
+
+/* 左侧图片区域 */
+.game-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 右侧控制面板 */
+.game-controls {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-item {
+  font-size: 1.2em;
+  color: #555;
+}
+
+.status-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.status-value {
+  color: #222;
+}
+
+/* 按钮样式 */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control-button {
+  padding: 10px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.hint-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.hint-button:disabled {
+  background-color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.newgame-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.newgame-button:hover {
+  background-color: #1976D2;
+}
+
+.control-button:hover:not(:disabled) {
+  filter: brightness(0.9);
+}
+
+.game-over {
+  text-align: center;
+  font-size: 1.5em;
+  color: #E53935;
+  font-weight: bold;
+}
+
+/* 差异标记样式 */
 .circle {
   position: absolute;
   width: 40px;
@@ -9,13 +134,6 @@
   transform: translate(-50%, -50%);
 }
 
-/* 放大镜标记 */
 .hint-circle {
   border: 3px dashed green;
-}
-
-/* 图片容器 */
-.image-wrapper {
-  position: relative;
-  display: inline-block;
 }
