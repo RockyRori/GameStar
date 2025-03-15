@@ -32,6 +32,7 @@ if os.path.exists(JSON_PATH):
     with open(JSON_PATH, "r") as f:
         image_pool = json.load(f)
 
+
 def initialize_image_pool():
     """🔄 重新生成 5 组图片，并存储到图片池"""
     global image_pool
@@ -47,6 +48,7 @@ def initialize_image_pool():
 
         image_pool = new_pool  # ✅ 替换旧图片池
         print("✅ 新图片池生成完成！")
+
 
 @app.get("/generate")
 def get_image():
@@ -64,7 +66,7 @@ def get_image():
                 json.dump(image_pool, f)
 
             # ✅ 只剩 1 组未使用时，触发后台异步生成新的 5 组
-            if len(unused_images) == 1:
+            if len(unused_images) <= 2:
                 threading.Thread(target=initialize_image_pool).start()
 
             return {
@@ -74,6 +76,7 @@ def get_image():
             }
 
     return {"error": "No available images. Generating new images, please wait."}
+
 
 # ✅ 直接返回静态图片
 @app.get("/static/{filename}")
