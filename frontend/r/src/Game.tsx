@@ -171,7 +171,7 @@ const Game: React.FC = () => {
                   >
                     ✖
                   </div>
-              ))}
+                ))}
             </div>
           ))}
         </div>
