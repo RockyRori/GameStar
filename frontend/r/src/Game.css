@@ -7,7 +7,7 @@ body {
 }
 
 .game-container {
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 20px auto;
   padding: 20px;
   background: #fff;
@@ -17,29 +17,31 @@ body {
 
 .game-title {
   text-align: center;
-  font-size: 2em;
   color: #333;
+  margin-right: 180px;
   margin-bottom: 20px;
+  font-size: 4em;
+  font-weight: bold;
+  color: #F9872B;
+  text-shadow: 11px 6px 4px rgba(111,0,0,0.3);
 }
 
-/* 布局调整：左右两栏 */
+/* 布局调整：左侧图片区域，右侧控制面板 */
 .game-layout {
   display: flex;
   gap: 20px;
 }
 
-/* 左侧图片区域 */
+/* 左侧图片区域：水平排列两张图片 */
 .game-images {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 }
 
 .image-wrapper {
   position: relative;
-  display: inline-block;
-  margin-bottom: 10px;
   border: 2px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
@@ -47,7 +49,7 @@ body {
 
 /* 右侧控制面板 */
 .game-controls {
-  width: 300px;
+  width: 500px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -136,4 +138,14 @@ body {
 
 .hint-circle {
   border: 3px dashed green;
+}
+
+/* 错误点击的红色叉叉 */
+.error-marker {
+  position: absolute;
+  color: red;
+  font-size: 32px;
+  font-weight: bold;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }
