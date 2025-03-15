@@ -66,7 +66,7 @@ def get_image():
                 json.dump(image_pool, f)
 
             # ✅ 只剩 1 组未使用时，触发后台异步生成新的 5 组
-            if len(unused_images) <= 2:
+            if len(unused_images) <= 1:
                 threading.Thread(target=initialize_image_pool).start()
 
             return {
