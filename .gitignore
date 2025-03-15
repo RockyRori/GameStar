@@ -1,5 +1,5 @@
 # Mac builtin
-backnd/static
+backnd/static/*
 .DS_Store
 **/.DS_Store
 .DS_Store?
