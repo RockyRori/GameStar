@@ -39,7 +39,7 @@ def initialize_image_pool():
     with lock:  # 🔒 确保只有一个线程可以执行
         print("🔄 正在生成新图片池...")
         new_pool = []
-        for i in range(5):  # ✅ 用 i 作为唯一标识
+        for i in range(10):  # ✅ 用 i 作为唯一标识
             img1, img2, differences = generate_images(i)
             new_pool.append({"img1": img1, "img2": img2, "differences": differences, "used": False})
 

@@ -22,8 +22,42 @@ load_model()
 
 def generate_images(unique_id: int):
     """生成一对找不同图片，并存储到 static/ 目录"""
-    prompt = "A cozy living room with books and a cat"
-    img1 = pipe(prompt).images[0]  # 生成第一张图片
+    # 定义 28 种不同场景的提示词
+    prompts = [
+        "A cozy living room with books and a cat",
+        "A futuristic cityscape at night with neon lights",
+        "A serene beach at sunset with palm trees",
+        "A bustling medieval marketplace in a historic town",
+        "A quiet mountain cabin in a snowy forest",
+        "A vibrant flower garden with butterflies",
+        "An ancient temple in a lush jungle",
+        "A modern art gallery with abstract paintings",
+        "A busy urban street with towering skyscrapers",
+        "A mystical forest with glowing mushrooms",
+        "A rustic farmyard with a red barn and animals",
+        "A charming European village with cobblestone streets",
+        "A grand castle on a hill under a starry sky",
+        "A futuristic laboratory with holograms and robots",
+        "A peaceful lake surrounded by autumn trees",
+        "A desert oasis with date palms and clear blue water",
+        "A bustling harbor with ships and seagulls",
+        "A magical winter wonderland with ice sculptures",
+        "A lively carnival with colorful tents and rides",
+        "A traditional Japanese garden with a koi pond",
+        "A vibrant street market with exotic fruits and spices",
+        "A serene monastery on a mountain top",
+        "A lush vineyard in the countryside during harvest",
+        "A dynamic sports stadium filled with cheering fans",
+        "A quaint coffee shop in a rainy city",
+        "A grand library with towering bookshelves",
+        "A whimsical treehouse village in an enchanted forest",
+        "A futuristic space station orbiting Earth"
+    ]
+    # 随机选择一种提示词
+    prompt = random.choice(prompts)
+
+    # 生成第一张图片
+    img1 = pipe(prompt).images[0]
 
     # 复制第一张图片，作为第二张图片
     img2 = img1.copy().convert("RGBA")
@@ -45,8 +79,8 @@ def generate_images(unique_id: int):
             for f in chosen_files:
                 asset_path = os.path.join(assets_dir, f)
                 asset = Image.open(asset_path).convert("RGBA")
-                # 调整资产图片尺寸为 40x40
-                asset = asset.resize((28, 28), Image.Resampling.LANCZOS)
+                # 调整资产图片尺寸为 40x40，使用 LANCZOS 重采样
+                asset = asset.resize((40, 40), Image.LANCZOS)
                 asset_images.append(asset)
         else:
             print("assets 目录中没有 png 文件，将使用默认红色圆点。")
