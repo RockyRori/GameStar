@@ -183,27 +183,27 @@ const Game: React.FC = () => {
         <div className="game-controls">
           <div className="status">
             <div className="status-item">
-              <span className="status-label">答对次数:</span>
+              <span className="status-label">Correct:</span>
               <span className="status-value">{foundPoints.length}/{differences.length}</span>
             </div>
             <div className="status-item">
-              <span className="status-label">倒计时:</span>
-              <span className="status-value">{timeLeft}秒</span>
+              <span className="status-label">Countdown:</span>
+              <span className="status-value">{timeLeft}s</span>
             </div>
             <div className="status-item">
-              <span className="status-label">分数:</span>
+              <span className="status-label">Score:</span>
               <span className="status-value">{score}</span>
             </div>
           </div>
           <div className="buttons">
             <button className="control-button hint-button" onClick={handleHint} disabled={hintsLeft <= 0 || gameOver}>
-              🔍 放大镜 ({hintsLeft})
+              🔍 Magnifier ({hintsLeft})
             </button>
             <button className="control-button newgame-button" onClick={fetchNewGame}>
-              🔄 下一局
+              🔄 Next Round
             </button>
           </div>
-          {gameOver && <div className="game-over">游戏结束！</div>}
+          {gameOver && <div className="game-over">END！</div>}
         </div>
       </div>
     </div>
