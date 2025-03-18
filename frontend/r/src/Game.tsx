@@ -1,4 +1,5 @@
 import "./Game.css";
+import backgroundMusic from "./assets/background.mp3";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
@@ -26,6 +27,10 @@ const Game: React.FC = () => {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [errorMarkers, setErrorMarkers] = useState<ErrorMarker[]>([]);
   const timerRef = useRef<number | null>(null);
+
+  // 背景音乐相关
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     fetchNewGame();
@@ -62,14 +67,13 @@ const Game: React.FC = () => {
 
   // 获取新局数据，同时重置所有状态
   const fetchNewGame = async () => {
-    // Windows 更新图片
-//     const response = await axios.get("http://localhost:8000/generate");
-//     setImage1(`http://localhost:8000/static/${response.data.image1}`);
-//     setImage2(`http://localhost:8000/static/${response.data.image2}`);
-    // Linux 获取旧图片
-    const response = await axios.get("http://20.189.123.18:8000/generate");
-    setImage1(`http://20.189.123.18:8000/static/${response.data.image1}`);
-    setImage2(`http://20.189.123.18:8000/static/${response.data.image2}`);
+    const address = "http://20.189.123.18:8000";
+//     const address = "http://localhost:8000";
+    const response = await axios.get(`${address}/generate`);
+    const timestamp = new Date().getTime();
+
+    setImage1(`${address}/static/${response.data.image1}?t=${timestamp}`);
+    setImage2(`${address}/static/${response.data.image2}?t=${timestamp}`);
 
     setDifferences(response.data.differences);
     setFoundPoints([]);
@@ -133,6 +137,32 @@ const Game: React.FC = () => {
     setHintsLeft(hintsLeft - 1);
   };
 
+  // 自动播放背景音乐
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.5;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch(() => console.warn("Auto play music failed Click button to start"));
+      }
+    }
+  }, []);
+
+  const toggleMusic = () => {
+    const audio = audioRef.current;
+    if (audio) {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.play().catch((error) => console.warn("Play music failed:", error));
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   return (
     <div className="game-container">
       <h1 className="game-title">Find The Diff</h1>
@@ -144,7 +174,7 @@ const Game: React.FC = () => {
               {image && (
                 <img
                   src={image}
-                  alt={`找不同${index + 1}`}
+                  alt={`FindTheDiff${index + 1}`}
                   width="512"
                   onClick={(e) => handleImageClick(e, index)}
                 />
@@ -180,7 +210,12 @@ const Game: React.FC = () => {
             </div>
           ))}
         </div>
+
         <div className="game-controls">
+        {/* 音乐播放按钮 */}
+          <button className="control-button music-button" onClick={toggleMusic}>
+            {isPlaying ? "⏸ To Pause" : "▶ Play Music"}
+          </button>
           <div className="status">
             <div className="status-item">
               <span className="status-label">Correct:</span>
@@ -195,6 +230,7 @@ const Game: React.FC = () => {
               <span className="status-value">{score}</span>
             </div>
           </div>
+
           <div className="buttons">
             <button className="control-button hint-button" onClick={handleHint} disabled={hintsLeft <= 0 || gameOver}>
               🔍 Magnifier ({hintsLeft})
@@ -206,6 +242,9 @@ const Game: React.FC = () => {
           {gameOver && <div className="game-over">END！</div>}
         </div>
       </div>
+
+      {/* 背景音乐 */}
+      <audio ref={audioRef} src={backgroundMusic} loop />
     </div>
   );
 };
