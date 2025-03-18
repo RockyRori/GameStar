@@ -60,6 +60,14 @@ npm install
 npm run dev
 ```
 
+### **部署到 GitHub Pages**
+
+```bash
+cd ./frontend/r
+npm run build
+npm run deploy
+```
+
 ### **游戏玩法**
 
 1. 游戏生成 2 张大致相同的 AI 图片
