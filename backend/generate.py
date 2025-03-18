@@ -25,6 +25,28 @@ def load_model():
 load_model()
 
 
+def generate_non_overlapping_positions(num_positions, min_distance, width=500, height=500, margin=50):
+    """
+    生成不重叠的随机点，每个点之间的最小距离为 min_distance。
+    :param num_positions: 需要生成的点数
+    :param min_distance: 点之间的最小距离
+    :param width: 画布宽度
+    :param height: 画布高度
+    :param margin: 边界留白
+    :return: 生成的点列表
+    """
+    positions = []
+
+    while len(positions) < num_positions:
+        x, y = random.randint(margin, width - margin), random.randint(margin, height - margin)
+
+        # 确保新点与已有点的距离大于 min_distance
+        if all(((x - px) ** 2 + (y - py) ** 2) ** 0.5 >= min_distance for px, py in positions):
+            positions.append((x, y))
+
+    return positions
+
+
 def generate_images(unique_id: int):
     """生成一对找不同图片，并存储到 static/ 目录"""
     # 定义 28 种不同场景的提示词
@@ -96,14 +118,13 @@ def generate_images(unique_id: int):
     # 如果没有加载到资产图片，则后续直接用红色圆点
     draw = ImageDraw.Draw(img2) if not asset_images else None
 
-    # 生成 5 处差异位置，每处使用 asset_images 中不同的图片
-    for i in range(5):
-        x, y = random.randint(50, 500), random.randint(50, 500)
+    # 生成 5 处差异位置，每处使用 asset_images 中不同的图片，且保证不会重叠
+    positions = generate_non_overlapping_positions(5, 60)
+    for i, (x, y) in enumerate(positions):
         differences.append({"x": x, "y": y})
         if asset_images:
             asset = asset_images[i]
-            # 计算左上角位置，使资产图片中心与 (x, y) 对齐
-            pos = (x - 20, y - 20)
+            pos = (x - 20, y - 20)  # 计算左上角位置
             img2.paste(asset, pos, asset)
         else:
             draw.ellipse((x - 10, y - 10, x + 10, y + 10), fill="red")
