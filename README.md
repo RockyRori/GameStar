@@ -49,7 +49,7 @@ Stable Diffusion 通过“**添加噪声 → 逐步恢复**”的过程进行图
 ```bash
 cd backend
 pip install -r requirements.txt
-uvicorn main:app --reload --host 127.0.0.1 --port 8080
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 ### **安装前端**
