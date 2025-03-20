@@ -60,6 +60,13 @@ npm install
 npm run dev
 ```
 
+### **更新依赖**
+
+```bash
+npm audit
+npm install
+```
+
 ### **部署到 GitHub Pages**
 
 ```bash

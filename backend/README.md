@@ -77,6 +77,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8080
 ```
 
 然后在浏览器或使用 `curl` 访问 `http://<你的服务器IP>:8000/generate`，检查接口是否正常响应。
+
 ```bash
 curl http://0.0.0.0:8000/generate
 curl http://20.189.123.18:8000/generate
@@ -154,31 +155,35 @@ sudo systemctl restart nginx
 
 ## 8. 防火墙配置
 
-确保服务器防火墙允许 HTTP（80）、HTTPS（443）以及后端服务端口（如 `8000`）：
+确保服务器防火墙允许 SSH（22）、HTTP（80）、HTTPS（443）以及后端服务端口（如 `8000`）：
 
 ```bash
+sudo ufw enable
+sudo ufw allow 22
 sudo ufw allow 80
 sudo ufw allow 443
 sudo ufw allow 8000
-sudo ufw enable
 ```
 
-## 9. 总结与后续
+## 9. 更新代码
 
-- **前端部分** 可以部署在 GitHub Pages 上，然后通过 API 调用已部署的后端服务（使用服务器的域名或 IP）。
-- **调试或修改环境** 时，记得先激活虚拟环境：
+直接更新git仓库即可，服务会自动重启。
 
-  ```bash
-  source /home/<your-username>/<your-repo-directory>/venv/bin/activate
-  ```
-
-- **日志排查**：
-    - Uvicorn 日志可直接查看终端输出。
-    - 使用 `systemctl` 管理的服务日志可通过以下命令查看：
-
-      ```bash
-      journalctl -u myapp.service -f
-      ```
-
-按照以上步骤，你可以在云服务器上完成后端服务的部署，并确保前后端顺利联动。
-
+### HTTPS加密
+github page强制使用https，因此服务器上面需要安装Cloudflare，并且申请Cloudflare Named Tunnel，最终实现对外使用https的能力。
+```bash
+screen -S mytunnel
+cloudflared tunnel --url http://localhost:8000
+```
+每一次生成的域名是随机的，比如
+```bash
+curl https://mixing-bits-veteran-maximum.trycloudflare.com/generate
+```
+断开会话但进程不会停止
+```bash
+Ctrl + A, 然后按 D
+```
+重新连接会话
+```bash
+screen -r mytunnel
+```
