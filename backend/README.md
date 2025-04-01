@@ -73,35 +73,35 @@ pip install -r ./backend/requirements.txt
 使用 `uvicorn` 启动 FastAPI 后端服务，建议在测试模式下运行，绑定到所有网络接口：
 
 ```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8080
+uvicorn main:app --reload --host 0.0.0.0 --port 8521
 ```
 
-然后在浏览器或使用 `curl` 访问 `http://<你的服务器IP>:8000/generate`，检查接口是否正常响应。
+然后在浏览器或使用 `curl` 访问 `http://<你的服务器IP>:8521/generate`，检查接口是否正常响应。
 
 ```bash
-curl http://0.0.0.0:8000/generate
-curl http://20.189.123.18:8000/generate
+curl http://0.0.0.0:8521/generate
+curl http://20.189.123.18:8521/generate
 ```
 
 ## 6. 配置 systemd 服务（可选，便于后台运行）
 
-在 `/etc/systemd/system/` 目录下创建 `myapp.service` 文件：
+在 `/etc/systemd/system/` 目录下创建 `gamestar.service` 文件：
 
 ```bash
-sudo nano /etc/systemd/system/myapp.service
+sudo nano /etc/systemd/system/gamestar.service
 ```
 
 文件内容如下（请替换路径和用户名）：
 
 ```ini
 [Unit]
-Description=GameStar后端服务
+Description=GameStar 后端服务
 After=network.target
 
 [Service]
 User=rocky
 WorkingDirectory=/home/rocky/project/GameStar/backend
-ExecStart=/home/rocky/project/GameStar/venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8000
+ExecStart=/home/rocky/project/GameStar/venv/bin/uvicorn main:app --reload --host 0.0.0.0 --port 8521
 Restart=always
 
 [Install]
@@ -112,14 +112,14 @@ WantedBy=multi-user.target
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable myapp.service
-sudo systemctl start myapp.service
+sudo systemctl enable gamestar.service
+sudo systemctl start gamestar.service
 ```
 
 检查服务状态：
 
 ```bash
-sudo systemctl status myapp.service
+sudo systemctl status gamestar.service
 ```
 
 ## 7. 配置 Nginx 反向代理（可选）
@@ -130,15 +130,22 @@ sudo systemctl status myapp.service
 sudo apt install -y nginx
 ```
 
-创建或编辑 Nginx 配置文件（例如 `/etc/nginx/sites-available/myapp`）：
+创建或编辑 Nginx 配置文件（例如 `/etc/nginx/sites-available/nginxapp`）：
 
 ```nginx
 server {
     listen 80;
     server_name 20.189.123.18;
 
-    location / {
-        proxy_pass http://127.0.0.1:8000;
+    location /ragnition/ {
+        proxy_pass http://127.0.0.1:8536/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /gamestar/ {
+        proxy_pass http://127.0.0.1:8521/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -148,21 +155,21 @@ server {
 启用该配置并重启 Nginx：
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/nginxapp /etc/nginx/sites-enabled/nginxapp
 sudo nginx -t
 sudo systemctl restart nginx
 ```
 
 ## 8. 防火墙配置
 
-确保服务器防火墙允许 SSH（22）、HTTP（80）、HTTPS（443）以及后端服务端口（如 `8000`）：
+确保服务器防火墙允许 SSH（22）、HTTP（80）、HTTPS（443）以及后端服务端口（如 `8521`）：
 
 ```bash
 sudo ufw enable
 sudo ufw allow 22
 sudo ufw allow 80
 sudo ufw allow 443
-sudo ufw allow 8000
+sudo ufw allow 8521
 ```
 
 ## 9. 更新代码
@@ -173,7 +180,7 @@ sudo ufw allow 8000
 github page强制使用https，因此服务器上面需要安装Cloudflare，并且申请Cloudflare Named Tunnel，最终实现对外使用https的能力。
 ```bash
 screen -S mytunnel
-cloudflared tunnel --url http://localhost:8000
+cloudflared tunnel --url http://localhost:8521
 ```
 每一次生成的域名是随机的，比如
 ```bash
