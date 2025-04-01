@@ -174,23 +174,37 @@ sudo ufw allow 8521
 
 ## 9. 更新代码
 
-直接更新git仓库即可，服务会自动重启。
+直接更新git仓库即可，服务会自动重启。或者使用下面命令来确保服务重启：
+
+```bash
+sudo systemctl status gamestar.service
+sudo systemctl restart gamestar.service
+sudo systemctl status gamestar.service
+```
 
 ### HTTPS加密
+
 github page强制使用https，因此服务器上面需要安装Cloudflare，并且申请Cloudflare Named Tunnel，最终实现对外使用https的能力。
+
 ```bash
 screen -S mytunnel
 cloudflared tunnel --url http://localhost:8521
 ```
+
 每一次生成的域名是随机的，比如
+
 ```bash
 curl https://biblical-ja-retrieved-generates.trycloudflare.com/generate
 ```
+
 断开会话但进程不会停止
+
 ```bash
 Ctrl + A, 然后按 D
 ```
+
 重新连接会话
+
 ```bash
 screen -r mytunnel
 ```
