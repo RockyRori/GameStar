@@ -184,7 +184,7 @@ cloudflared tunnel --url http://localhost:8521
 ```
 每一次生成的域名是随机的，比如
 ```bash
-curl https://mixing-bits-veteran-maximum.trycloudflare.com/generate
+curl https://biblical-ja-retrieved-generates.trycloudflare.com/generate
 ```
 断开会话但进程不会停止
 ```bash

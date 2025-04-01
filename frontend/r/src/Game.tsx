@@ -67,7 +67,7 @@ const Game: React.FC = () => {
 
   // 获取新局数据，同时重置所有状态
   const fetchNewGame = async () => {
-    const address = "https://mixing-bits-veteran-maximum.trycloudflare.com";
+    const address = "https://biblical-ja-retrieved-generates.trycloudflare.com";
 //     const address = "http://20.189.123.18:8521";
 //     const address = "http://localhost:8521";
     const response = await axios.get(`${address}/generate`);
